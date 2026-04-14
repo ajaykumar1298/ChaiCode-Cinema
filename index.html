@@ -12,19 +12,40 @@
         background-color: #0f172a;
         color: #f8fafc;
       }
+     
+      #logout-btn,
+      #login-section #login-btn {
+        display: none;
+      }
+     
+      #logout-btn.active,
+      #login-section #login-btn.active {
+        display: block;
+      }
     </style>
   </head>
   <body
     class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
   >
-     
-
- 
-    <div 
+    <div
       class="max-w-7xl w-full bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-slate-700/50"
     >
-   
-    
+      <div id="login-section" class="flex items-center gap-5">
+        <div id="user-name"></div>
+        <button
+          id="login-btn"
+          class="p-2 border-2 rounded-lg bg-gray-700 text-white shadow-lg"
+        >
+          login/signup
+        </button>
+        <button
+          id="logout-btn"
+          class="p-2 border-2 rounded-lg bg-gray-700 text-white shadow-lg"
+        >
+          logout
+        </button>
+      </div>
+
       <div class="text-center mb-10">
         <h1
           class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-4 tracking-tight"
@@ -73,14 +94,76 @@
     </div>
 
     <script>
-       
+      let loginBtn = document.querySelector("#login-btn");
+      let userInfo = document.querySelector("#user-name");
+      let logoutBtn = document.querySelector("#logout-btn");
+
+      // if (!isUser) {
+      //   loginBtn?.classList.add("active");
+      //   userInfo?.classList.remove("active");
+      //   logoutBtn?.classList.remove("active");
+      // } else {
+      //   userInfo.innerHTML = `Welcom back <span class="text-green-300 text-bold text-lg">${isUser}</span>`;
+      //   userInfo?.classList.add("active");
+      //   loginBtn?.classList.remove("active");
+      //   logoutBtn?.classList.add("active");
+      // }
+      async function init() {
+        try {
+          const res = await fetch("/getUser", {
+            method:"GET"
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+          loginBtn.style.display = "block";
+          logoutBtn.style.display = "none";
+            // userInfo.style.display="none"
+              userInfo.innerHTML =`<span class="text-green-300 text-bold text-lg">Guest User</span>`
+          return
+          }
+
+          userInfo.innerHTML =`Welcom back <span class="text-green-300 text-bold text-lg">${data.data.username}</span>`
+          // show logout
+          loginBtn.style.display = "none";
+          logoutBtn.style.display = "block";
+          // userInfo.style.display="block"
+        } catch (error) {
+          userInfo.innerHTML =`<span class="text-green-300 text-bold text-lg">Guest User</span>`
+          loginBtn.style.display = "block";
+          logoutBtn.style.display = "none";
+          // userInfo.style.display="none"
+        }
+      }
+      init();
+      loginBtn.addEventListener("click", () => {
+        window.location = "/login";
+      });
+
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          const res = await fetch("/auth/logout", {
+            method: "POST",
+            credentials: "include",
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            alert(data.msg + " ✅");
+            window.location.href = "/login";
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      });
       async function run() {
         const tbl = document.getElementById("tbl");
         const res = await fetch("/seats");
         const resarray = await res.json();
         const j = resarray.sort((a, b) => a.id - b.id);
-      
-        
+
         let tr;
         for (let i = 0; i < j.length; i++) {
           if (i % 8 === 0) tr = document.createElement("tr");
@@ -94,13 +177,13 @@
           if (j[i].isBooked) {
             td.className = `${baseClasses} bg-rose-500/10 text-rose-500/60 border border-rose-500/20 cursor-not-allowed`;
             td.innerHTML = `
-                    <span class="relative z-10">${j[i].id}</span>
-                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-slate-900 border border-slate-700 text-sm text-slate-300 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-                        Booked by: <span class="font-bold text-white ml-1">${j[i].name}</span>
-                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-slate-700"></div>
-                        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-slate-900"></div>
-                    </div>
-                `;
+                          <span class="relative z-10">${j[i].id}</span>
+                          <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-slate-900 border border-slate-700 text-sm text-slate-300 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+                              Booked by: <span class="font-bold text-white ml-1">${j[i].name}</span>
+                              <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-slate-700"></div>
+                              <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-slate-900"></div>
+                          </div>
+                      `;
           } else {
             td.className = `${baseClasses} bg-emerald-500 text-white border-2 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer hover:bg-emerald-400 hover:-translate-y-1.5 hover:shadow-[0_10px_25px_rgba(16,185,129,0.5)] active:scale-95 active:shadow-[0_0_10px_rgba(16,185,129,0.3)]`;
             td.innerHTML = `<span class="relative z-10">${j[i].id}</span>`;
@@ -114,13 +197,16 @@
 
             try {
               const id = j[i].id; // Safe from loop closure
+              
               const name = prompt("Enter your name");
               if (!name) return;
 
               const res = await fetch(`/${id}/${name}`, { method: "PUT" });
-              if(res.status!=="200"){
-                alert("please login first to book ticket!")
-                return
+             
+              
+              if (res.status !== 200) {
+                alert("please login first to book ticket!");
+                return;
               }
               const data = await res.json();
               if (data.error) {
@@ -130,13 +216,13 @@
                 // Visually transition to booked state upon success
                 currentTd.className = `${baseClasses} bg-rose-500/10 text-rose-500/60 border border-rose-500/20 cursor-not-allowed`;
                 currentTd.innerHTML = `
-                            <span class="relative z-10">${id}</span>
-                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-slate-900 border border-slate-700 text-sm text-slate-300 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-                                Booked by: <span class="font-bold text-white ml-1">${name}</span>
-                                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-slate-700"></div>
-                                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-slate-900"></div>
-                            </div>
-                        `;
+                                  <span class="relative z-10">${id}</span>
+                                  <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-slate-900 border border-slate-700 text-sm text-slate-300 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-2xl z-50 pointer-events-none font-normal shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+                                      Booked by: <span class="font-bold text-white ml-1">${name}</span>
+                                      <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-[6px] border-transparent border-t-slate-700"></div>
+                                      <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[5px] border-transparent border-t-slate-900"></div>
+                                  </div>
+                              `;
               }
             } catch (ex) {
               alert("error booking " + ex);

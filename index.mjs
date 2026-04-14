@@ -19,6 +19,7 @@ dotenv.config();
 // import { fileURLToPath } from "url";
 import cors from "cors";
 import { authUser } from "./src/middlewares/auth.middleware.js";
+import userModel from "./src/models/user.model.js";
 const port = 3000;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -61,6 +62,20 @@ if (count === 0) {
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
+app.get("/login", (req, res) => {
+  res.sendFile(__dirname + "/pages/login.html");
+});
+
+app.get("/getUser", authUser, async (req, res) => {
+  let data = await userModel.findOne({
+    $or: [{ _id: req.user.id }],
+  });
+  res.json({
+    msg: "get user data",
+    data,
+  });
+});
+
 //get all seats
 app.get("/seats", async (req, res) => {
   // const result = await pool.query("select * from seats"); // equivalent to Seats.find() in mongoose

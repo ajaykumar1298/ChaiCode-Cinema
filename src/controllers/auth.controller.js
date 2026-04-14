@@ -19,7 +19,7 @@ export async function userRegister(req, res) {
     email,
     password: hash,
   });
-  const token = jwt.sign({ id: user._id }, process.env.JWT_URI);
+  const token = jwt.sign({ id: user._id, name: username }, process.env.JWT_URI);
   res.cookie("token", token);
   return res.status(201).json({
     msg: "User registered",
@@ -43,10 +43,20 @@ export async function loginUser(req, res) {
       msg: "Wrong password",
     });
   }
-  const token = jwt.sign({ id: user._id }, process.env.JWT_URI);
+  const token = jwt.sign(
+    { id: user._id, name: user.username },
+    process.env.JWT_URI,
+  );
   res.cookie("token", token);
   return res.status(200).json({
     msg: "user login successfully",
     user,
+  });
+}
+
+export async function logoutUser(req, res) {
+  res.clearCookie("token");
+  res.status(200).json({
+    msg: "logout user!",
   });
 }
