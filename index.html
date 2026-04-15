@@ -25,26 +25,29 @@
     </style>
   </head>
   <body
-    class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
+    class="min-h-screen flex flex-col items-center justify-center  bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
   >
-    <div
-      class="max-w-7xl w-full bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-slate-700/50"
-    >
-      <div id="login-section" class="flex items-center gap-5">
-        <div id="user-name"></div>
+  <div class="flex felx-row bg-gray-900 p-4 w-full mb-12 items-center">
+      <div id="login-section" class="flex felx-row gap-4 items-center  ">
         <button
           id="login-btn"
-          class="p-2 border-2 rounded-lg bg-gray-700 text-white shadow-lg"
+          class=" p-2  rounded-lg bg-green-600  shadow-lg "
         >
-          login/signup
+          login /signup
         </button>
         <button
           id="logout-btn"
-          class="p-2 border-2 rounded-lg bg-gray-700 text-white shadow-lg"
+          class="p-2  rounded-lg bg-gray-700 text-white shadow-lg bg-red-500 shadow-lg"
         >
           logout
         </button>
+        <div id="user-name"></div>
       </div>
+  </div>
+    <div
+      class="max-w-7xl w-full bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-slate-700/50"
+    >
+    
 
       <div class="text-center mb-10">
         <h1
@@ -85,10 +88,10 @@
         <div
           class="bg-slate-900/40 p-8 rounded-2xl border border-slate-700/50 shadow-inner"
         >
-          <table
+          <div
             id="tbl"
-            class="border-separate border-spacing-4 mx-auto"
-          ></table>
+            class="grid gap-3 grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8"
+          ></div>
         </div>
       </div>
     </div>
@@ -164,15 +167,15 @@
         const resarray = await res.json();
         const j = resarray.sort((a, b) => a.id - b.id);
 
-        let tr;
+        // let tr;
         for (let i = 0; i < j.length; i++) {
-          if (i % 8 === 0) tr = document.createElement("tr");
+          // if (i % 8 === 0) tr = document.createElement("tr");
 
-          const td = document.createElement("td");
+          const td = document.createElement("div");
 
           // Base aesthetic classes - added 'relative group' for tooltip positioning
           const baseClasses =
-            "w-32 h-32 rounded-2xl text-center align-middle text-2xl font-bold transition-all duration-300 select-none relative group";
+            "w-full h-20 aspect-square rounded-xl flex items-center justify-center text-xs sm:text-sm md:text-lg font-bold transition-all duration-300 select-none relative group";
 
           if (j[i].isBooked) {
             td.className = `${baseClasses} bg-rose-500/10 text-rose-500/60 border border-rose-500/20 cursor-not-allowed`;
@@ -228,8 +231,9 @@
               alert("error booking " + ex);
             }
           });
-          tr.appendChild(td);
-          tbl.appendChild(tr);
+          // tr.appendChild(td);
+          // tbl.appendChild(tr);
+          tbl.appendChild(td);
         }
       }
       run();
