@@ -74,7 +74,7 @@
           <button id="submitBtn" class="w-full bg-green-600 py-2 rounded-lg">
             Login
           </button>
-          <button id="skip" class="w-full bg-gray-600 py-2 rounded-lg">
+          <button id="skip" type="button" class="w-full bg-gray-600 py-2 rounded-lg">
             Skip
           </button>
         </div>
@@ -112,7 +112,8 @@
       });
 
       // skip handle
-      document.querySelector("#skip").addEventListener("click", () => {
+      document.querySelector("#skip").addEventListener("click", (e) => {
+        e.preventDefault()
         window.location.href = "/";
       });
       //   handle api
