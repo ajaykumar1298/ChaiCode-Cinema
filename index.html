@@ -100,46 +100,47 @@
       let loginBtn = document.querySelector("#login-btn");
       let userInfo = document.querySelector("#user-name");
       let logoutBtn = document.querySelector("#logout-btn");
+      let isUser=localStorage.getItem("username")
 
-      // if (!isUser) {
-      //   loginBtn?.classList.add("active");
-      //   userInfo?.classList.remove("active");
-      //   logoutBtn?.classList.remove("active");
-      // } else {
-      //   userInfo.innerHTML = `Welcom back <span class="text-green-300 text-bold text-lg">${isUser}</span>`;
-      //   userInfo?.classList.add("active");
-      //   loginBtn?.classList.remove("active");
-      //   logoutBtn?.classList.add("active");
-      // }
-      async function init() {
-        try {
-          const res = await fetch("/getUser", {
-            method:"GET"
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-          loginBtn.style.display = "block";
-          logoutBtn.style.display = "none";
-            // userInfo.style.display="none"
-              userInfo.innerHTML =`<span class="text-green-300 text-bold text-lg">Guest User</span>`
-          return
-          }
-
-          userInfo.innerHTML =`Welcom back <span class="text-green-300 text-bold text-lg">${data.data.username}</span>`
-          // show logout
-          loginBtn.style.display = "none";
-          logoutBtn.style.display = "block";
-          // userInfo.style.display="block"
-        } catch (error) {
-          userInfo.innerHTML =`<span class="text-green-300 text-bold text-lg">Guest User</span>`
-          loginBtn.style.display = "block";
-          logoutBtn.style.display = "none";
-          // userInfo.style.display="none"
-        }
+      if (!isUser) {
+        loginBtn?.classList.add("active");
+        userInfo?.classList.remove("active");
+        logoutBtn?.classList.remove("active");
+      } else {
+        userInfo.innerHTML = `Welcom back <span class="text-green-300 text-bold text-lg">${isUser}</span>`;
+        userInfo?.classList.add("active");
+        loginBtn?.classList.remove("active");
+        logoutBtn?.classList.add("active");
       }
-      init();
+      // async function init() {
+      //   try {
+      //     const res = await fetch("/getUser", {
+      //       method:"GET"
+      //     });
+
+      //     const data = await res.json();
+
+      //     if (!res.ok) {
+      //     loginBtn.style.display = "block";
+      //     logoutBtn.style.display = "none";
+      //       // userInfo.style.display="none"
+      //         userInfo.innerHTML =`<span class="text-green-300 text-bold text-lg">Guest User</span>`
+      //     return
+      //     }
+
+      //     userInfo.innerHTML =`Welcom back <span class="text-green-300 text-bold text-lg">${data.data.username}</span>`
+      //     // show logout
+      //     loginBtn.style.display = "none";
+      //     logoutBtn.style.display = "block";
+      //     // userInfo.style.display="block"
+      //   } catch (error) {
+      //     userInfo.innerHTML =`<span class="text-green-300 text-bold text-lg">Guest User</span>`
+      //     loginBtn.style.display = "block";
+      //     logoutBtn.style.display = "none";
+      //     // userInfo.style.display="none"
+      //   }
+      // }
+      // init();
       loginBtn.addEventListener("click", () => {
         window.location = "/login";
       });
@@ -154,7 +155,9 @@
           const data = await res.json();
 
           if (res.ok) {
+            localStorage.removeItem("username")
             alert(data.msg + " ✅");
+
             window.location.href = "/login";
           }
         } catch (error) {

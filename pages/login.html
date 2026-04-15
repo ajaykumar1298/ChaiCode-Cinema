@@ -6,29 +6,32 @@
     <title>login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script >
-      async function init() {
-        try {
-          const res = await fetch("/getUser", {
-            method: "GET",
-            credentials: "include",
-          });
+      // async function init() {
+      //   try {
+      //     const res = await fetch("/getUser", {
+      //       method: "GET",
+      //       credentials: "include",
+      //     });
 
-          if (res.ok) {
-            window.location.href = "/";
-            return;
-          }
-            document.body.style.display = "";
-        } catch (error) {
-              document.body.style.display = "";
-          console.log(error);
-        }
+      //     if (res.ok) {
+      //       window.location.href = "/";
+      //       return;
+      //     }
+      //       document.body.style.display = "";
+      //   } catch (error) {
+      //         document.body.style.display = "";
+      //     console.log(error);
+      //   }
+      // }
+
+      // init();
+      let isUser=localStorage.getItem("username")
+      if(isUser){
+        window.location.href="/"
       }
-
-      init();
     </script>
   </head>
   <body
-  style="display: none;"
     class="bg-gray-900 flex flex-col items-center justify-center  gap-6 text-white"
   >
     <!-- app heading -->
@@ -127,8 +130,10 @@
 
           const data = await res.json();
           if (res.ok) {
+            localStorage.setItem("username",data.user.username)
             alert(successMsg + " ✅");
             window.location.href = "/";
+            
           } else {
             alert(`${failMsg} : ${data.msg} ❌`);
           }
